@@ -13,6 +13,14 @@ public class ViewUtils {
         return view.getY() + (view.getHeight() / 2);
     }
 
+    public static float getUncenteredX(View view, float centerX) {
+        return centerX - (view.getWidth() / 2);
+    }
+
+    public static float getUncenteredY(View view, float centerY) {
+        return centerY - (view.getHeight() / 2);
+    }
+
     public static void setCenterX(View view, float x) {
         view.setX(x - (view.getWidth() / 2));
     }

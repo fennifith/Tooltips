@@ -23,17 +23,35 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
     private TooltipView tooltipView;
     private Position position = Position.BELOW;
     private int padding = ViewUtils.dpToPx(16);
+    private ValueAnimator animator;
 
     public Tooltip(Activity activity) {
         context = activity;
         rootView = (ViewGroup) activity.findViewById(android.R.id.content);
-        tooltipView = new TooltipView(context);
+        init();
     }
 
     public Tooltip(ViewGroup rootView) {
         context = rootView.getContext();
         this.rootView = rootView;
+        init();
+    }
+
+    private void init() {
         tooltipView = new TooltipView(context);
+
+        int width = rootView.getWidth();
+        if (width > 0)
+            tooltipView.setMaximumWidth(width - (2 * padding));
+        else {
+            rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    tooltipView.setMaximumWidth(rootView.getWidth() - (2 * padding));
+                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+        }
     }
 
     public Tooltip setBackground(@NonNull Drawable drawable) {
@@ -86,35 +104,40 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
 
     public void showFor(final View view) {
         if (tooltipView.getParent() != null) return;
+        else if (isAnimating()) animator.cancel();
 
         rootView.addView(tooltipView);
         tooltipView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                float newX, newY;
                 switch (position) {
                     case ABOVE:
-                        ViewUtils.setCenterX(tooltipView, ViewUtils.getCenterX(view));
-                        tooltipView.setY((view.getTop() - padding) - tooltipView.getHeight());
+                        newX = ViewUtils.getUncenteredX(tooltipView, ViewUtils.getCenterX(view));
+                        newY = (view.getTop() - padding) - tooltipView.getHeight();
                         break;
                     case BELOW:
-                        ViewUtils.setCenterX(tooltipView, ViewUtils.getCenterX(view));
-                        tooltipView.setY(view.getBottom() + padding);
+                        newX = ViewUtils.getUncenteredX(tooltipView, ViewUtils.getCenterX(view));
+                        newY = view.getBottom() + padding;
                         break;
                     case LEFT:
-                        tooltipView.setX((view.getLeft() - padding) - tooltipView.getWidth());
-                        ViewUtils.setCenterY(tooltipView, ViewUtils.getCenterY(view));
+                        newX = (view.getLeft() - padding) - tooltipView.getWidth();
+                        newY = ViewUtils.getUncenteredY(tooltipView, ViewUtils.getCenterY(view));
                         break;
                     case RIGHT:
-                        tooltipView.setX(view.getRight() + padding);
-                        ViewUtils.setCenterY(tooltipView, ViewUtils.getCenterY(view));
+                        newX = view.getRight() + padding;
+                        newY = ViewUtils.getUncenteredY(tooltipView, ViewUtils.getCenterY(view));
                         break;
-                    case CENTER:
-                        ViewUtils.setCenterX(tooltipView, ViewUtils.getCenterX(view));
-                        ViewUtils.setCenterY(tooltipView, ViewUtils.getCenterY(view));
+                    default:
+                        newX = ViewUtils.getUncenteredX(tooltipView, ViewUtils.getCenterX(view));
+                        newY = ViewUtils.getUncenteredY(tooltipView, ViewUtils.getCenterY(view));
                         break;
                 }
 
-                ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+                tooltipView.setX(Math.min((rootView.getWidth() - tooltipView.getWidth()) - padding, Math.max(padding, newX)));
+                tooltipView.setY(Math.min((rootView.getHeight() - tooltipView.getHeight()) - padding, Math.max(padding, newY)));
+
+                animator = ValueAnimator.ofFloat(0, 1);
                 animator.addUpdateListener(Tooltip.this);
                 animator.start();
 
@@ -125,35 +148,40 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
 
     public void showFor(final int x, final int y) {
         if (tooltipView.getParent() != null) return;
+        else if (isAnimating()) animator.cancel();
 
         rootView.addView(tooltipView);
         tooltipView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                float newX, newY;
                 switch (position) {
                     case ABOVE:
-                        ViewUtils.setCenterX(tooltipView, x);
-                        tooltipView.setY((y - padding) - tooltipView.getHeight());
+                        newX = ViewUtils.getUncenteredX(tooltipView, x);
+                        newY = (y - padding) - tooltipView.getHeight();
                         break;
                     case BELOW:
-                        ViewUtils.setCenterX(tooltipView, x);
-                        tooltipView.setY(y + padding);
+                        newX = ViewUtils.getUncenteredX(tooltipView, x);
+                        newY = y + padding;
                         break;
                     case LEFT:
-                        tooltipView.setX((x - padding) - tooltipView.getWidth());
-                        ViewUtils.setCenterY(tooltipView, y);
+                        newX = (x - padding) - tooltipView.getWidth();
+                        newY = ViewUtils.getUncenteredY(tooltipView, y);
                         break;
                     case RIGHT:
-                        tooltipView.setX(x + padding);
-                        ViewUtils.setCenterY(tooltipView, y);
+                        newX = x + padding;
+                        newY = ViewUtils.getUncenteredY(tooltipView, y);
                         break;
-                    case CENTER:
-                        ViewUtils.setCenterX(tooltipView, x);
-                        ViewUtils.setCenterY(tooltipView, y);
+                    default:
+                        newX = ViewUtils.getUncenteredX(tooltipView, x);
+                        newY = ViewUtils.getUncenteredY(tooltipView, y);
                         break;
                 }
 
-                ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+                tooltipView.setX(Math.min((rootView.getWidth() - tooltipView.getWidth()) - padding, Math.max(padding, newX)));
+                tooltipView.setY(Math.min((rootView.getHeight() - tooltipView.getHeight()) - padding, Math.max(padding, newY)));
+
+                animator = ValueAnimator.ofFloat(0, 1);
                 animator.addUpdateListener(Tooltip.this);
                 animator.start();
 
@@ -164,8 +192,9 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
 
     public void dismiss() {
         if (tooltipView.getParent() == null) return;
+        else if (isAnimating()) animator.cancel();
 
-        ValueAnimator animator = ValueAnimator.ofFloat(1, 0);
+        animator = ValueAnimator.ofFloat(1, 0);
         animator.addUpdateListener(Tooltip.this);
         animator.addListener(new Animator.AnimatorListener() {
             @Override
@@ -188,9 +217,18 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
         animator.start();
     }
 
+    public boolean isAnimating() {
+        return animator != null && animator.isRunning();
+    }
+
+    public boolean isShowing() {
+        return tooltipView.getParent() != null;
+    }
+
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
-        tooltipView.setAlpha((float) animation.getAnimatedValue());
+        float scale = (float) animation.getAnimatedValue();
+        tooltipView.setAlpha(scale);
     }
 
     public enum Position {

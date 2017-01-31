@@ -19,6 +19,8 @@ public class TooltipView extends FrameLayout {
     public AppCompatImageView imageView;
     public TextView textView;
 
+    private int maxWidth;
+
     public TooltipView(Context context) {
         super(context);
         init();
@@ -49,5 +51,18 @@ public class TooltipView extends FrameLayout {
         imageView = (AppCompatImageView) v.findViewById(R.id.image);
         textView = (TextView) v.findViewById(R.id.text);
         addView(v);
+    }
+
+    public void setMaximumWidth(int maxWidth) {
+        this.maxWidth = maxWidth;
+        invalidate();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (maxWidth > 0 && maxWidth < MeasureSpec.getSize(widthMeasureSpec))
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.getMode(widthMeasureSpec));
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 }
