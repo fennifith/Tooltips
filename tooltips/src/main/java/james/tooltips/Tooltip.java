@@ -47,7 +47,7 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
             rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    tooltipView.setMaximumWidth(rootView.getWidth() - (2 * padding));
+                    tooltipView.setMaximumWidth((int) ((rootView.getWidth() - (2 * padding)) * 0.6));
                     rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             });
@@ -81,6 +81,11 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
 
     public Tooltip setPadding(int padding) {
         this.padding = padding;
+        return this;
+    }
+
+    public Tooltip setMaximumWidth(int maxWidth) {
+        tooltipView.setMaximumWidth(maxWidth);
         return this;
     }
 
