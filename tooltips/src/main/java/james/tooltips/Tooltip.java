@@ -4,9 +4,12 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.MotionEvent;
 import android.view.View;
@@ -74,7 +77,22 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
         return this;
     }
 
-    public Tooltip setPosition(Position position) {
+    public Tooltip setIcon(@Nullable Drawable drawable) {
+        if (drawable != null) {
+            tooltipView.imageView.setVisibility(View.VISIBLE);
+            tooltipView.imageView.setImageDrawable(drawable);
+        } else
+            tooltipView.imageView.setVisibility(View.GONE);
+
+        return this;
+    }
+
+    public Tooltip setIconTint(@ColorInt int color, @NonNull PorterDuff.Mode mode) {
+        tooltipView.imageView.setColorFilter(new PorterDuffColorFilter(color, mode));
+        return this;
+    }
+
+    public Tooltip setPosition(@NonNull Position position) {
         this.position = position;
         return this;
     }
@@ -93,11 +111,11 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
         return tooltipView;
     }
 
-    public void setView(TooltipView tooltipView) {
+    public void setView(@NonNull TooltipView tooltipView) {
         this.tooltipView = tooltipView;
     }
 
-    public void attachTo(View view) {
+    public void attachTo(@NonNull View view) {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -115,7 +133,7 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
         });
     }
 
-    public void showFor(final View view) {
+    public void showFor(@NonNull final View view) {
         if (tooltipView.getParent() != null) return;
         else if (isAnimating()) animator.cancel();
 
