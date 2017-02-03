@@ -89,6 +89,14 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
         return this;
     }
 
+    public TooltipView getView() {
+        return tooltipView;
+    }
+
+    public void setView(TooltipView tooltipView) {
+        this.tooltipView = tooltipView;
+    }
+
     public void attachTo(View view) {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
