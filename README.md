@@ -7,7 +7,7 @@ For testing and experimentation purposes, a sample apk can be downloaded [here](
 The Gradle dependency is available through jcenter, which is used by default in Android Studio. To add the module to your project, copy this line into the dependencies section of your build.gradle file.
 
 ``` gradle
-compile 'james.tooltips:tooltips:0.0.2'
+compile 'james.tooltips:tooltips:0.0.3'
 ```
 
 ## Usage
@@ -45,7 +45,10 @@ tooltip.showFor(x, y); //show the tooltip under the specified coordinates
 Again, simply call `tooltip.dismiss();` when you want it to be dismissed.
 
 ### Customization
-It is also possible to change the position, padding, background shape, background color, and text color of the tooltip.
+It is also possible to add an icon, change the position, padding, background shape, background color, icon color, and text color of the tooltip.
+
+#### Icon
+To add an icon, pass a drawable to the tooltip using the `Tooltip.setIcon(Drawable)` method. To hide the icon after one has been set, simply call `Tooltip.setIcon(null)`.
 
 #### Position
 There are five available positions that the tooltip can be shown in: `Tooltip.Position.ABOVE`, `Tooltip.Position.BELOW`, `Tooltip.Position.LEFT`, `Tooltip.Position.RIGHT`, and `Tooltip.Position.CENTER`. These can be changed using the `Tooltip.setPosition(Position)` method like below.
@@ -80,6 +83,16 @@ The background color can be set using the `Tooltip.setBackgroundColor(int)` meth
 new Tooltip(this)
   .setText("Hi!")
   .setBackgroundColor(Color.BLUE)
+  .attachTo(view);
+```
+
+#### Icon Color
+The icon color can be changed using the `Tooltip.setIconTint(int, PorterDuff.Mode)` method like below.
+``` java
+new Tooltip(this)
+  .setText("Hi!")
+  .setIcon(drawable)
+  .setIconTint(Color.BLUE, PorterDuff.Mode.SRC_IN)
   .attachTo(view);
 ```
 
