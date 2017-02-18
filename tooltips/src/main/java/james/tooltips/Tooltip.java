@@ -137,7 +137,6 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
         if (tooltipView.getParent() != null) return;
         else if (isAnimating()) animator.cancel();
 
-        rootView.addView(tooltipView);
         tooltipView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -175,13 +174,13 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
                 tooltipView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+        rootView.addView(tooltipView);
     }
 
     public void showFor(final int x, final int y) {
         if (tooltipView.getParent() != null) return;
         else if (isAnimating()) animator.cancel();
 
-        rootView.addView(tooltipView);
         tooltipView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -219,6 +218,7 @@ public class Tooltip implements ValueAnimator.AnimatorUpdateListener {
                 tooltipView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+        rootView.addView(tooltipView);
     }
 
     public void dismiss() {
