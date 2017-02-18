@@ -55,7 +55,7 @@ public class TooltipView extends FrameLayout {
 
     public void setMaximumWidth(int maxWidth) {
         this.maxWidth = maxWidth;
-        invalidate();
+        requestLayout();
     }
 
     @Override
