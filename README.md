@@ -1,4 +1,6 @@
 # Tooltips
+**Note: Development of Tooltips has been discontinued as they will be [added in Android O](https://developer.android.com/reference/android/view/View.html#attr_android:tooltipText).**
+
 A small tooltips library for Android based on Material Design.
 
 For testing and experimentation purposes, a sample apk can be downloaded [here](https://github.com/TheAndroidMaster/Tooltips/releases).
