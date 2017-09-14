@@ -1,7 +1,6 @@
-# Tooltips
 **Note: Development of Tooltips has been discontinued as they will be [added in Android O](https://developer.android.com/reference/android/view/View.html#attr_android:tooltipText).** PRs will still be accepted, however, and a new release will be made after any significant changes.
 
-A small tooltips library for Android based on Material Design.
+Tooltips is a small library for Android based on Material Design used for showing context around a button, image, or another interactive element.
 
 For testing and experimentation purposes, a sample apk can be downloaded [here](https://github.com/TheAndroidMaster/Tooltips/releases).
 
